@@ -1,37 +1,27 @@
 #include "MainFrame.h"
 #include <wx/wx.h> 
 
-/*
-	Custom id rules
-	- must be positive,
-	- can be 0 or 1
-	- can be from wxID_LOWEST(4999) to wxID_HIGHEST(5999)
-*/
-enum IDs {
-	BUTTON_ID = 2,
-	SLIDER_ID = 3,
-	TEXT_ID = 4,
-};
-
-wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
-EVT_BUTTON(BUTTON_ID, MainFrame::OnBUttonClicked)
-EVT_SLIDER(SLIDER_ID, MainFrame::OnSliderChanged)
-EVT_TEXT(TEXT_ID, MainFrame::OnTextChanged)
-wxEND_EVENT_TABLE();
-
+// use dynamic event handling
+  
 MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) {
 
 	wxPanel* panel = new wxPanel(this);
  
-	wxButton* button = new wxButton(panel, BUTTON_ID, "Button", wxPoint(300, 275), wxSize(200, 50));
-	wxSlider* slider = new wxSlider(panel, SLIDER_ID, 0, 0, 100, wxPoint(300, 200), wxSize(200, -1));
-	wxTextCtrl* textCtrl = new wxTextCtrl(panel, TEXT_ID, "", wxPoint(300, 375), wxSize(200, -1));
+	wxButton* button = new wxButton(panel, wxID_ANY, "Button", wxPoint(300, 275), wxSize(200, 50));
+	wxSlider* slider = new wxSlider(panel, wxID_ANY, 0, 0, 100, wxPoint(300, 200), wxSize(200, -1));
+	wxTextCtrl* textCtrl = new wxTextCtrl(panel, wxID_ANY, "", wxPoint(300, 375), wxSize(200, -1));
+
+	button->Bind(wxEVT_BUTTON, &MainFrame::OnButtonClicked, this);
+	slider->Bind(wxEVT_SLIDER, &MainFrame::OnSliderChanged, this);
+	textCtrl->Bind(wxEVT_TEXT, &MainFrame::OnTextChanged, this);
+
+	button->Unbind(wxEVT_BUTTON, &MainFrame::OnButtonClicked, this);
 
 	CreateStatusBar();
 
 }
 
-void MainFrame::OnBUttonClicked(wxCommandEvent& evt) {
+void MainFrame::OnButtonClicked(wxCommandEvent& evt) {
 	wxLogStatus("Button clicked!");
 }
 
