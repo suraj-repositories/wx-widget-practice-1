@@ -1,53 +1,49 @@
 #include "MainFrame.h"
-#include <wx/wx.h>
-#include <wx/spinctrl.h>
+#include <wx/wx.h> 
+
+/*
+	Custom id rules
+	- must be positive,
+	- can be 0 or 1
+	- can be from wxID_LOWEST(4999) to wxID_HIGHEST(5999)
+*/
+enum IDs {
+	BUTTON_ID = 2,
+	SLIDER_ID = 3,
+	TEXT_ID = 4,
+};
+
+wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
+EVT_BUTTON(BUTTON_ID, MainFrame::OnBUttonClicked)
+EVT_SLIDER(SLIDER_ID, MainFrame::OnSliderChanged)
+EVT_TEXT(TEXT_ID, MainFrame::OnTextChanged)
+wxEND_EVENT_TABLE();
 
 MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) {
 
 	wxPanel* panel = new wxPanel(this);
+ 
+	wxButton* button = new wxButton(panel, BUTTON_ID, "Button", wxPoint(300, 275), wxSize(200, 50));
+	wxSlider* slider = new wxSlider(panel, SLIDER_ID, 0, 0, 100, wxPoint(300, 200), wxSize(200, -1));
+	wxTextCtrl* textCtrl = new wxTextCtrl(panel, TEXT_ID, "", wxPoint(300, 375), wxSize(200, -1));
 
-	wxButton* button = new wxButton(panel, wxID_ANY, "Button",  wxPoint(150, 50), wxSize(100, 35), wxBU_LEFT);
+	CreateStatusBar();
 
-	wxCheckBox* checkbox = new wxCheckBox(
-		panel,
-		wxID_ANY,
-		"Checkbox",
-		wxPoint(350, 55),
-		wxDefaultSize,
-		wxCHK_3STATE | wxCHK_ALLOW_3RD_STATE_FOR_USER
-	);
+}
 
-	wxStaticText* staticText = new wxStaticText(panel, wxID_ANY, "Hello World!", wxPoint(0, 150), wxSize(400, -1), wxALIGN_CENTER_HORIZONTAL);
-	staticText->SetBackgroundColour(*wxLIGHT_GREY);
+void MainFrame::OnBUttonClicked(wxCommandEvent& evt) {
+	wxLogStatus("Button clicked!");
+}
 
-	wxTextCtrl* textCtrl = new wxTextCtrl(panel, wxID_ANY, "Type here", wxPoint(350, 145), wxSize(200, -1), wxTE_PASSWORD); // -1 means default height
+void MainFrame::OnSliderChanged(wxCommandEvent& evt) {
+	//int value = evt.GetInt();
+	//wxLogStatus("Slider value: %d", value);
 
-	wxSlider* slider = new wxSlider(panel, wxID_ANY, 25, 0, 100, wxPoint(100, 250), wxSize(200, -1), wxSL_VALUE_LABEL);
+	wxString str = wxString::Format("Slider Value: %d", evt.GetInt());
+	wxLogStatus( str);
+}
 
-	wxGauge* gauge = new wxGauge(panel, wxID_ANY, 100, wxPoint(590, 205), wxSize(-1, 125), wxGA_VERTICAL);
-	gauge->SetValue(75);
-
-	wxArrayString arrayString;
-	arrayString.Add("Option 1");
-	arrayString.Add("Option 3");
-	arrayString.Add("Option 2");
-
-	wxChoice* choice = new wxChoice(panel, wxID_ANY, wxPoint(150, 375), wxSize(100, -1), arrayString, wxCB_SORT);
-	choice->Select(0);
-
-	wxSpinCtrl* spinCtrl = new wxSpinCtrl(panel, wxID_ANY, wxEmptyString, wxPoint(550, 375), wxSize(100, -1), wxSP_WRAP);
-
-	wxListBox* listBox = new wxListBox(panel, wxID_ANY, wxPoint(150, 475), wxSize(100, -1), arrayString, wxLB_MULTIPLE);
-
-	wxRadioBox* radioBox = new wxRadioBox(
-		panel,
-		wxID_ANY,
-		"Radio Box",
-		wxPoint(555, 455),
-		wxDefaultSize,
-		arrayString,
-		3,
-		wxRA_SPECIFY_ROWS
-	);
-
+void MainFrame::OnTextChanged(wxCommandEvent& evt) {
+	wxString text = evt.GetString();
+	wxLogStatus("Text changed: %s", text);
 }
