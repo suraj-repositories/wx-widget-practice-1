@@ -7,5 +7,5 @@ public:
 	MainFrame(const wxString& title);
 
 private: 
-	void OnMouseEvent(wxMouseEvent& evt);
+	void onKeyEvent(wxKeyEvent& evt);
 };

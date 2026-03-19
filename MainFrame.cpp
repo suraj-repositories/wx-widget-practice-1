@@ -4,37 +4,53 @@
 
 MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) {
 
-	wxPanel* panel = new wxPanel(this);
+	//wxPanel* panel = new wxPanel(this);
+	wxPanel* panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
  
-	wxButton* button = new wxButton(panel, wxID_ANY, "Button", wxPoint(300, 250), wxSize(200, 100));
-	
-	wxStatusBar* statusBar = CreateStatusBar();
-	statusBar->SetDoubleBuffered(true); // stop Buffering
-
-	// Available actions
 	/*
-	wxEVT_LEFT_DOWN, 
-	wxEVT_LEFT_UP, 
-	wxEVT_RIGHT_DOWN, 
-	wxEVT_RIGHT_UP, 
-	wxEVT_MIDDLE_DOWN, 
-	wxEVT_MIDDLE_UP, 
-	wxEVT_MOTION 
+		other key event types include:
+		wxEVT_KEY_UP,
+		wxEVT_CHAR, 
+		wxEVT_CHAR_HOOK, 
+		wxEVT_CHAR_MAX
 	*/
-	  
-	panel->Bind(wxEVT_MOTION, &MainFrame::OnMouseEvent, this);
-	button->Bind(wxEVT_MOTION, &MainFrame::OnMouseEvent, this);
+	//panel->Bind(wxEVT_KEY_DOWN, &MainFrame::onKeyEvent, this);
+
+	wxButton* btn1 = new wxButton(panel, wxID_ANY, "Button 1", wxPoint(300, 150), wxSize(200, 100), wxWANTS_CHARS);
+	wxButton* btn2 = new wxButton(panel, wxID_ANY, "Button 2", wxPoint(300, 350), wxSize(200, 100));
+
+	//btn1->Bind(wxEVT_KEY_DOWN, &MainFrame::onKeyEvent, this);
+
+	panel->Bind(wxEVT_CHAR_HOOK, &MainFrame::onKeyEvent, this);
+
+	CreateStatusBar();
 
 }
 
-void MainFrame::OnMouseEvent(wxMouseEvent& evt) {
+void MainFrame::onKeyEvent(wxKeyEvent& evt) {
 
-	//wxPoint mousePos = evt.GetPosition();
-	wxPoint mousePos = wxGetMousePosition();
+	// when uses wxWANTS_CHARS on button the tab and arrow will not work - so you need to handle them manually
+	if (evt.GetKeyCode() == WXK_TAB) {
+		wxWindow* window = (wxWindow*)evt.GetEventObject();
+		window->Navigate();
+	}
 
-	mousePos = this->ScreenToClient(mousePos); // convert to client coordinates
-	wxString message = wxString::Format("Mouse event detected at (%d, %d)", mousePos.x, mousePos.y);
+	//if (evt.GetUnicodeKey() == 'A') {
+	//	wxLogStatus("You pressed the A key!");
+	//}
+	//else if (evt.GetKeyCode() == WXK_HOME) {
+	//	wxLogStatus("HOME was pressed");
+	//}
+	//return;
 
-	wxLogStatus(message);
+	wxChar keyChar = evt.GetUnicodeKey();
+	if (keyChar == WXK_NONE) {
+		int keyCode = evt.GetKeyCode();
+		wxLogStatus("You pressed a non-character key with code %d", keyCode);
+	}
+	else {
+		wxLogStatus("You pressed the '%c' key!", keyChar);
+	}
+	 
 }
  
